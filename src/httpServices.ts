@@ -13,7 +13,7 @@ async function fetchData(inputA: string, inputB: string): Promise<User> {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
+    console.log('fetch code ', response.status)
     const userData: User = await response.json();
 
     return userData;

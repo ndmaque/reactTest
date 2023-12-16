@@ -1,8 +1,8 @@
 // App.js
 
 import React, { useState } from 'react';
-import './App.css';
-import fetchData from './httpServices.ts';  // Updated import statement
+import { TextField, Button, Typography, Container } from '@mui/material';
+import fetchData from './httpServices.ts';
 
 function App() {
   const [inputA, setInputA] = useState('');
@@ -19,60 +19,78 @@ function App() {
   };
 
   const handleSendClick = async () => {
+    //let responseData = null
+    setDisplayValues({ A: inputA, B: inputB, responseData: null })
     try {
       // Make a GET request using the fetchData function
       const responseData = await fetchData(inputA, inputB);
-
+      
       // Set the display values
       setDisplayValues({ A: inputA, B: inputB, responseData });
     } catch (error) {
       // Error handling is already done in the fetchData function
+      console.log('catch err: ', error)
     }
   };
 
   return (
-    <div className="App">
+    <Container maxWidth="sm">
+      <Typography variant="h1" align="center" gutterBottom style={{ marginTop: '100px' }}>
+        Users
+      </Typography>
+      <Typography variant="body1" paragraph>
+        Enter values for A and B, then click the "Search Users by ID" button to fetch data.
+        The information you enter will be added to the API URL. For example, if you
+        enter "valueA" for A and "valueB" for B, the API request URL will be:
+        <code>http://localhost:3600/api/users/valueA/valueB</code>.
+      </Typography>
       <div>
-        <label htmlFor="inputA">A:</label>
-        <input
-          type="text"
-          id="inputA"
+        <TextField
+          label="A"
+          variant="outlined"
+          fullWidth
+          margin="normal"
           value={inputA}
           onChange={(e) => handleInputChange(e, 'A')}
         />
       </div>
       <div>
-        <label htmlFor="inputB">B:</label>
-        <input
-          type="text"
-          id="inputB"
+        <TextField
+          label="B"
+          variant="outlined"
+          fullWidth
+          margin="normal"
           value={inputB}
           onChange={(e) => handleInputChange(e, 'B')}
         />
       </div>
-      <button onClick={handleSendClick}>Send</button>
+      <Button variant="contained" color="primary" onClick={handleSendClick}>
+        Search Users by ID
+      </Button>
 
-      {/* Display values of A, B, and response data */}
       {displayValues && (
         <div>
-          <p>Values:</p>
-          <p>A: {displayValues.A}</p>
-          <p>B: {displayValues.B}</p>
-
-          {/* Display response data */}
+          <div>
+            <Typography variant="h6" className="Values">
+              Input Values: A: {displayValues.A} B: {displayValues.B}
+            </Typography>
+          </div>
+          <Typography variant="body2" color="textSecondary" paragraph>
+                API URL: <code>http://localhost:3600/api/users/{displayValues.A}/{displayValues.B}</code>
+          </Typography>
           {displayValues.responseData && (
             <div>
-              <p>Response Data:</p>
-              <p>ID: {displayValues.responseData.id}</p>
-              <p>First Name: {displayValues.responseData.first_name}</p>
-              <p>Last Name: {displayValues.responseData.last_name}</p>
-              <p>Email: {displayValues.responseData.email}</p>
-              <p>Phone: {displayValues.responseData.phone}</p>
+
+              <Typography>ID: {displayValues.responseData.id}</Typography>
+              <Typography>First Name: {displayValues.responseData.first_name}</Typography>
+              <Typography>Last Name: {displayValues.responseData.last_name}</Typography>
+              <Typography>Email: {displayValues.responseData.email}</Typography>
+              <Typography>Phone: {displayValues.responseData.phone}</Typography>
             </div>
           )}
         </div>
       )}
-    </div>
+    </Container>
   );
 }
 
