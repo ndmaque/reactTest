@@ -1,33 +1,33 @@
 // App.js
 
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Container } from '@mui/material';
+import { TextField, Button, Typography, Container, CircularProgress } from '@mui/material';
 import fetchData from './httpServices.ts';
 import './App.css'; 
 
 function App() {
   const [uidQuery, setUidQuery] = useState('');
   const [displayValues, setDisplayValues] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     setUidQuery(e.target.value);
   };
 
-  const handleSearchUsersClick = async () => {
-    // Reset the users list while http is resolved 
-    setDisplayValues({ users: [], msg: '' })
-    try {
-      // Make a GET request using the fetchData function
-      const users = await fetchData(uidQuery);
-      // Set the display values
-      setDisplayValues({ users: users, msg:  'Found ' + users.length + ' users'});
-
-    } catch (error) {
-      // Error handling is already done in the fetchData function
-      setDisplayValues({ msg: 'Error: Api fetch = ' + error });
-      console.log('catch err: ', error)
-    }
-  };
+const handleSearchUsersClick = async () => {
+  setIsLoading(true); // Set isLoading to true when starting the API request
+  setDisplayValues({ users: [], msg: '' });
+  
+  try {
+    const users = await fetchData(uidQuery);
+    setDisplayValues({ users: users, msg: 'Found ' + users.length + ' users' });
+  } catch (error) {
+    setDisplayValues({ msg: 'Error: Api fetch = ' + error });
+    console.log('catch err: ', error);
+  } finally {
+    setIsLoading(false); // Set isLoading back to false after the request is complete (whether it was successful or not)
+  }
+};
 
   return (
     <Container maxWidth="sm">
@@ -47,8 +47,8 @@ function App() {
       <div>
         <code>http://localhost:3600/api/users/<span style={{color:'red'}}>{uidQuery}</span></code>
       </div>
-      <Button className='searchUsers' variant="contained" color="primary" onClick={handleSearchUsersClick}>
-        Search Users
+      <Button className='searchUsers' variant="contained" color="primary" onClick={handleSearchUsersClick} disabled={isLoading}>
+        {isLoading ? <CircularProgress size={24} /> : 'Search Users'}
       </Button>
 
       {displayValues && (
