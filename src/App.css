@@ -5,9 +5,19 @@
   margin: 50px;
 }
 
-h1 {
-  font-size: 2rem;
+h1.main {
+  font-size: 2.8rem ;
   margin-bottom: 20px;
+  margin-top: 60px;
+}
+h2.msgBox {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+button.searchUsers {
+  margin-top: 30px !important;
 }
 
 label {
@@ -31,21 +41,14 @@ button {
 button:hover {
   background-color: #45a049;
 }
-
-.Values {
-  margin-top: 20px;
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-gap: 10px;
 }
-
-.Values p {
-  font-size: 1rem;
-  margin: 5px 0;
-}
-
-.ResponseData {
-  margin-top: 20px;
-}
-
-.ResponseData p {
-  font-size: 1rem;
-  margin: 5px 0;
+.card {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
 }

@@ -3,90 +3,69 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Container } from '@mui/material';
 import fetchData from './httpServices.ts';
+import './App.css'; 
 
 function App() {
-  const [inputA, setInputA] = useState('');
-  const [inputB, setInputB] = useState('');
+  const [uidQuery, setUidQuery] = useState('');
   const [displayValues, setDisplayValues] = useState(null);
 
-  const handleInputChange = (e, inputType) => {
-    const value = e.target.value;
-    if (inputType === 'A') {
-      setInputA(value);
-    } else if (inputType === 'B') {
-      setInputB(value);
-    }
+  const handleInputChange = (e) => {
+    setUidQuery(e.target.value);
   };
 
-  const handleSendClick = async () => {
-    //let responseData = null
-    setDisplayValues({ A: inputA, B: inputB, responseData: null })
+  const handleSearchUsersClick = async () => {
+    // Reset the users list while http is resolved 
+    setDisplayValues({ users: [], msg: '' })
     try {
       // Make a GET request using the fetchData function
-      const responseData = await fetchData(inputA, inputB);
-      
+      const users = await fetchData(uidQuery);
       // Set the display values
-      setDisplayValues({ A: inputA, B: inputB, responseData });
+      setDisplayValues({ users: users, msg:  'Found ' + users.length + ' users'});
+
     } catch (error) {
       // Error handling is already done in the fetchData function
+      setDisplayValues({ msg: 'Error: Api fetch = ' + error });
       console.log('catch err: ', error)
     }
   };
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h1" align="center" gutterBottom style={{ marginTop: '100px' }}>
-        Users
-      </Typography>
-      <Typography variant="body1" paragraph>
-        Enter values for A and B, then click the "Search Users by ID" button to fetch data.
-        The information you enter will be added to the API URL. For example, if you
-        enter "valueA" for A and "valueB" for B, the API request URL will be:
-        <code>http://localhost:3600/api/users/valueA/valueB</code>.
+      <Typography variant="h1" align="center" gutterBottom className="main">
+        messageMonster UI
       </Typography>
       <div>
         <TextField
-          label="A"
+          label="Search users by ID or leave empty for All Users"
           variant="outlined"
           fullWidth
           margin="normal"
-          value={inputA}
-          onChange={(e) => handleInputChange(e, 'A')}
+          value={uidQuery}
+          onChange={(e) => handleInputChange(e)}  
         />
       </div>
       <div>
-        <TextField
-          label="B"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={inputB}
-          onChange={(e) => handleInputChange(e, 'B')}
-        />
+        <code>http://localhost:3600/api/users/<span style={{color:'red'}}>{uidQuery}</span></code>
       </div>
-      <Button variant="contained" color="primary" onClick={handleSendClick}>
-        Search Users by ID
+      <Button className='searchUsers' variant="contained" color="primary" onClick={handleSearchUsersClick}>
+        Search Users
       </Button>
 
       {displayValues && (
         <div>
-          <div>
-            <Typography variant="h6" className="Values">
-              Input Values: A: {displayValues.A} B: {displayValues.B}
-            </Typography>
+          <Typography variant="h2" className='msgBox'>{displayValues.msg}</Typography>
+          {displayValues.users && displayValues.users[0] && (
+            <div className="card-container">
+            {displayValues.users.map((user) => (
+              <div className="card" key={user.id}>
+                <Typography>ID: {user.id}</Typography>
+                <Typography>First Name: {user.first_name}</Typography>
+                <Typography>Last Name: {user.last_name}</Typography>
+                <Typography>Email: {user.email}</Typography>
+                <Typography>Phone: {user.phone}</Typography>
+              </div>
+            ))}
           </div>
-          <Typography variant="body2" color="textSecondary" paragraph>
-                API URL: <code>http://localhost:3600/api/users/{displayValues.A}/{displayValues.B}</code>
-          </Typography>
-          {displayValues.responseData && (
-            <div>
-
-              <Typography>ID: {displayValues.responseData.id}</Typography>
-              <Typography>First Name: {displayValues.responseData.first_name}</Typography>
-              <Typography>Last Name: {displayValues.responseData.last_name}</Typography>
-              <Typography>Email: {displayValues.responseData.email}</Typography>
-              <Typography>Phone: {displayValues.responseData.phone}</Typography>
-            </div>
           )}
         </div>
       )}

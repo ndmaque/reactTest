@@ -1,22 +1,18 @@
-// api.ts
+// httpServices.ts
 
 import { User } from './models.ts';
 
 const baseUrl = 'http://localhost:3600/api/users';
 
-async function fetchData(inputA: string, inputB: string): Promise<User> {
-  const url = `${baseUrl}/${inputA}/${inputB}`;
+
+async function fetchData(userID: string): Promise<User> {
+  const url = `${baseUrl}/${userID}`;
 
   try {
     const response = await fetch(url);
+    const users: User = await response.json();
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    console.log('fetch code ', response.status)
-    const userData: User = await response.json();
-
-    return userData;
+    return users ;
   } catch (error) {
     console.error('Error fetching data:', error.message);
     throw error;
