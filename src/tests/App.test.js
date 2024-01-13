@@ -1,4 +1,4 @@
-import fetchData from './httpServices';
+import fetchData from '../httpServices';
 
 test('fetchData function should fetch data correctly', async () => {
   // Assuming you have a mock server using something like `msw` or other mocking libraries
@@ -10,11 +10,11 @@ test('fetchData function should fetch data correctly', async () => {
     ok: true,
   });
 
-  const result = await fetchData('A', 'B');
+  const result = await fetchData('A');
 
   // Assertions
   expect(result).toEqual(mockResponse);
 
   // Make sure fetch was called with the correct URL
-  expect(global.fetch).toHaveBeenCalledWith('http://localhost:3600/api/users/A/B');
+  expect(global.fetch).toHaveBeenCalledWith('http://localhost:3600/api/users/A');
 });
